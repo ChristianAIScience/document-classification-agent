@@ -3,8 +3,11 @@ name = "document-classification-agent"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.12.10"
-dependencies = []
+requires-python = ">=3.12"
+dependencies = [
+    "dotenv>=0.9.9",
+    "fastapi>=0.143.0",
+]
 
 [dependency-groups]
 dev = [

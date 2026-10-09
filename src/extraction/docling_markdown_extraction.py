@@ -4,13 +4,13 @@
 #############
 
 from pathlib import Path
-from src.config import settings
+from src.core.config import config
 from docling.document_converter import DocumentConverter
 
 
 # Paths
-upload_dir = Path(settings.uploads_dir)
-markdown_dir = Path(settings.markdown_dir)
+upload_dir = Path(config.uploads_dir)
+markdown_dir = Path(config.markdown_dir)
 
 # Ensure output directory exists
 markdown_dir.mkdir(parents=True, exist_ok=True)
