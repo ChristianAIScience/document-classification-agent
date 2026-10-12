@@ -1,9 +1,6 @@
-from database.test import database_test
+from config import settings
 
-def main():
-    print("Hello from document-classification-agent!")
+data_dir = settings.data_dir
 
-database_test()
+print(data_dir)
 
-if __name__ == "__main__":
-    main()

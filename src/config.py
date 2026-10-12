@@ -5,28 +5,16 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
 
-BASE_DIR = Path(__file__).resolve().parents[2]
+BASE_DIR = Path(__file__).resolve().parents[1]
 
 
-class Config(BaseSettings):
+class Settings(BaseSettings):
     # --- Basis-Path --- #
     data_dir: Path = BASE_DIR / "data"
-
-    # --- PostgreSQL --- #
-    db_user: str = ""
-    db_password: str = ""
-    db_host: str = "localhost"
-    db_port: int = 5432
-    db_name: str = "test_postgres_db"
 
     # --- Sqlite --- #
     database_dir: Path = data_dir / "sqlite_database"
     sqlite_db_path: Path = database_dir / "auftraege.db"
-
-    # --- JSON-Path --- #
-    json_dir: Path = data_dir / "json_files"
-    extracted_json_dir: Path = json_dir / "extracted_json"
-    processed_json_dir: Path = json_dir / "processed_json"
 
     # --- Uploads --- #
     uploads_dir: Path = data_dir / "uploads"
@@ -35,11 +23,16 @@ class Config(BaseSettings):
     # --- Markdown --- #
     markdown_dir: Path = data_dir / "extracted_markdown"
     processed_markdown_dir: Path = markdown_dir / "processed_markdown"
+    
+    # --- JSON-Path --- #
+    json_dir: Path = data_dir / "json_files"
+    extracted_json_dir: Path = json_dir / "extracted_json"
+    processed_json_dir: Path = json_dir / "processed_json"
+
     # --- Errors --- #
     errors_dir: Path = data_dir / "error_data"
     
     # --- .env --- #
-    # Secrets
     openai_api_key: SecretStr
 
     model_config = SettingsConfigDict(
@@ -49,4 +42,4 @@ class Config(BaseSettings):
     )
 
 
-config = Config()
+settings = Settings()

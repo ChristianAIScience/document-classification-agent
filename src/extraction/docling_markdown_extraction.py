@@ -1,16 +1,11 @@
-#############
-# Using the docling OCR library to extract text from documents
-# and export it to Markdown format.
-#############
-
 from pathlib import Path
-from src.core.config import config
+from config import settings
 from docling.document_converter import DocumentConverter
 
 
 # Paths
-upload_dir = Path(config.uploads_dir)
-markdown_dir = Path(config.markdown_dir)
+upload_dir = settings.uploads_dir
+markdown_dir = settings.markdown_dir
 
 # Ensure output directory exists
 markdown_dir.mkdir(parents=True, exist_ok=True)
