@@ -1,5 +1,5 @@
 from pathlib import Path
-from config import settings
+from core.config import settings
 from docling.document_converter import DocumentConverter
 
 
