@@ -12,6 +12,13 @@ class Settings(BaseSettings):
     # --- Basis-Path --- #
     data_dir: Path = BASE_DIR / "data"
 
+    # --- PostgreSQL --- #
+    DB_NAME: str
+    DB_USER: str
+    DB_PASSWORD: str
+    DB_HOST: str
+    DB_PORT: int = 5432
+
     # --- Sqlite --- #
     database_dir: Path = data_dir / "sqlite_database"
     sqlite_db_path: Path = database_dir / "auftraege.db"
