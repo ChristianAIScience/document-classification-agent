@@ -1,0 +1,99 @@
+[
+  {
+    "id": 1,
+    "dokumententyp": "angebot",
+    "angebotsnummer": "106484501",
+    "kunde": {
+      "firmen_name": "Test Franken GmbH",
+      "kundennummer": "12345",
+      "strasse": "Hafenstraße 18",
+      "postleitzahl": "96052",
+      "stadt": "Bamberg",
+      "telefon": "+49 951 76532",
+      "email": "rechnung@test-franken.de"
+    },
+    "positionen": [
+      {
+        "position": 1,
+        "beschreibung": "Montage und Inbetriebnahme vor Ort",
+        "menge": 5,
+        "einheit": "Stück",
+        "preis": 898.00
+      },
+      {
+        "position": 2,
+        "beschreibung": "Anfahrt und Einrichtung der Baustelle",
+        "menge": 1,
+        "einheit": "Pauschal",
+        "preis": 250.00
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "dokumententyp": "angebot",
+    "angebotsnummer": "501",
+    "kunde": {
+      "firmen_name": "Hallo GmbH",
+      "kundennummer": "78345",
+      "strasse": "Siemensstraße 68",
+      "postleitzahl": "91052",
+      "stadt": "Erlangen",
+      "telefon": "+49 9131 6531",
+      "email": "info@hallo-gmbh.de"
+    },
+    "positionen": [
+      {
+        "position": 1,
+        "beschreibung": "Bauschaufel mit Holzstiel",
+        "menge": 5,
+        "einheit": "Stück",
+        "preis": 78.00
+      },
+      {
+        "position": 2,
+        "beschreibung": "Baueimer 20 Liter",
+        "menge": 1,
+        "einheit": "Stück",
+        "preis": 12.00
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "dokumententyp": "angebot",
+    "angebotsnummer": "ANG-2026-003",
+    "kunde": {
+      "firmen_name": "Solartechnik Mainfranken GmbH",
+      "kundennummer": "KD-10087",
+      "strasse": "Industriestraße 24",
+      "postleitzahl": "97076",
+      "stadt": "Würzburg",
+      "telefon": "+49 931 4567890",
+      "email": "info@solartechnik-mainfranken.de"
+    },
+    "positionen": [
+      {
+        "position": 1,
+        "beschreibung": "Photovoltaikmodule 450 Wp",
+        "menge": 20,
+        "einheit": "Stück",
+        "preis": 145.00
+      },
+      {
+        "position": 2,
+        "beschreibung": "Montage der Photovoltaikanlage auf dem Dach",
+        "menge": 16,
+        "einheit": "Stunde",
+        "preis": 75.00
+      },
+      {
+        "position": 3,
+        "beschreibung": "Installation und Konfiguration des Wechselrichters",
+        "menge": 1,
+        "einheit": "Pauschal",
+        "preis": 850.00
+      }
+    ]
+  }
+]
