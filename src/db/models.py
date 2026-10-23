@@ -1,14 +1,14 @@
+from __future__ import annotations
+
 from datetime import date
 from enum import Enum
-from typing import Optional
 from decimal import Decimal
 
-from pydantic import EmailStr
-from sqlmodel import SQLModel, Field
+from sqlalchemy import Date, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-# --------------------------------------------------
-# Database Models
-# --------------------------------------------------
+from .database import Base
+
 
 class Einheit(str, Enum):
     STUECK = "Stück"
@@ -17,59 +17,59 @@ class Einheit(str, Enum):
     STUNDE = "Stunde"
 
 
-class Kunde(SQLModel, table=True):
+class Kunde(Base):
     __tablename__ = "kunden"
 
-    id: int | None = Field(default=None, primary_key=True)
-    firmen_name: str = Field(unique=True)
-    strasse: Optional[str] = None
-    postleitzahl: Optional[str] = None
-    stadt: Optional[str] = None
-    telefon: Optional[str] = None
-    email: Optional[EmailStr] = Field(default=None, unique=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    firmen_name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    kundennummer: Mapped[str | None] = mapped_column(String(50), unique=True, default=None)
+    strasse: Mapped[str | None] = mapped_column(String(60), default=None)
+    postleitzahl: Mapped[str | None] = mapped_column(String(15), default=None)
+    stadt: Mapped[str | None] = mapped_column(String(100), default=None)
+    telefon: Mapped[str | None] = mapped_column(String(50), default=None)
+    email: Mapped[str | None] = mapped_column(String(120), unique=True, nullable=True, default=None)
+
+    # Ein Kunde -> mehrere Dokumente
+    dokumente: Mapped[list["KundenDokument"]] = relationship(back_populates="kunde")
 
 
-class KundenDokument(SQLModel, table=True):
+class KundenDokument(Base):
     __tablename__ = "kunden_dokumente"
 
-    id: Optional[int] = Field(default=None, primary_key=True)
-    kunde_id: int = Field(foreign_key="kunden.id", index=True)
-    angebotsnummer: Optional[str] = Field(default=None, index=True, unique=False)
-    auftragsnummer: Optional[str] = Field(default=None, index=True, unique=False)
-    rechnungsnummer: Optional[str] = Field(default=None, unique=True)
-    eintragsdatum: date = Field(default_factory=date.today)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    kunde_id: Mapped[int] = mapped_column(ForeignKey("kunden.id"), index=True, nullable=False)
+    dokumententyp: Mapped[str] = mapped_column(String(20), nullable=False)
+    angebotsnummer: Mapped[str | None] = mapped_column(String(50), index=True, default=None)
+    auftragsnummer: Mapped[str | None] = mapped_column(String(50), index=True, default=None)
+    rechnungsnummer: Mapped[str | None] = mapped_column(String(50), unique=True, default=None)
+    eintragsdatum: Mapped[date] = mapped_column(Date, default=date.today)
+
+    # Jedes Dokument gehört einem Kunden
+    kunde: Mapped["Kunde"] = relationship(back_populates="dokumente")
+
+    # Ein Dokument -> mehrere Positionen
+    positionen: Mapped[list["KundenDokumentPosition"]] = relationship(
+        back_populates="dokument",
+        order_by="KundenDokumentPosition.position"
+    )
 
 
-class KundenDokumentPosition(SQLModel, table=True):
+class KundenDokumentPosition(Base):
     __tablename__ = "kunden_dokument_positionen"
 
-    id: Optional[int] = Field(default=None, primary_key=True)
-    dokument_id: int = Field(foreign_key="kunden_dokumente.id", index=True)
-    position: Optional[int] = None
-    beschreibung: Optional[str] = None
-    menge: Optional[Decimal] = Field(default=None, max_digits=12, decimal_places=3)
-    einheit: Optional[Einheit] = None
-    preis: Optional[Decimal] = Field(default=None, max_digits=12, decimal_places=2)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    dokument_id: Mapped[int] = mapped_column(
+        ForeignKey("kunden_dokumente.id"),
+        index=True,
+        nullable=False
+    )
+    position: Mapped[int | None] = mapped_column(Integer, default=None)
+    beschreibung: Mapped[str | None] = mapped_column(Text, default=None)
+    menge: Mapped[Decimal | None] = mapped_column(Numeric(12, 3), default=None)
+    einheit: Mapped[str | None] = mapped_column(String(50), default=None)
+    gesamtpreis: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), default=None)
 
-
-class FirmenDokument(SQLModel, table=True):
-    __tablename__ = "firmen_dokumente"
-
-    id: Optional[int] = Field(default=None, primary_key=True)
-    kunde_id: int = Field(foreign_key="kunden.id", index=True)
-    angebotsnummer: Optional[str] = Field(default=None, index=True, unique=False)
-    auftragsnummer: Optional[str] = Field(default=None, index=True, unique=False)
-    rechnungsnummer: Optional[str] = Field(default=None, unique=True)
-    eintragsdatum: date = Field(default_factory=date.today)
-
-
-class FirmenDokumentPosition(SQLModel, table=True):
-    __tablename__ = "firmen_dokument_positionen"
-
-    id: Optional[int] = Field(default=None, primary_key=True)
-    dokument_id: int = Field(foreign_key="firmen_dokumente.id", index=True)
-    position: Optional[int] = None
-    beschreibung: Optional[str] = None
-    menge: Optional[Decimal] = Field(default=None, max_digits=12, decimal_places=3)
-    einheit: Optional[Einheit] = None
-    preis: Optional[Decimal] = Field(default=None, max_digits=12, decimal_places=2)
+    # Jede Position gehört einem Dokument
+    dokument: Mapped["KundenDokument"] = relationship(
+        back_populates="positionen"
+    )
