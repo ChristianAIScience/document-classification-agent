@@ -27,12 +27,10 @@ class KundeCreate(KundeBase):
     pass
 
 
-class KundeResponse(KundeBase):
-    pass
-    # model_config = ConfigDict(from_attributes=True)
+class KundeResponse(KundeCreate):
+    id: int
 
-    # id: int | None = None
-    # date_created: date | None = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class DokumentPositionsBase(BaseModel):
