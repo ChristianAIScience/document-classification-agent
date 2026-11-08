@@ -1,8 +1,8 @@
-from multi_agent_system.config import settings
+from core.config import settings
 from langchain.agents import create_agent
 from langchain.chat_models import init_chat_model
 
-from multi_agent_system.agents.tools.document_tools import compare_documents
+from tools.document_tools import compare_documents
 
 
 model = init_chat_model("gpt-5-nano",

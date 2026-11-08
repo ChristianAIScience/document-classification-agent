@@ -51,19 +51,31 @@ class DokumentPositionsResponse(DokumentPositionsBase):
     pass
 
 
-class Dokument(BaseModel):
+class DokumentBase(BaseModel):
     dokumententyp: Literal["angebot", "rechnung"]
-
-    kunde: KundeBase
 
     angebotsnummer: str | None = None
     angebotsdatum: date | None = None
-    angebotgueltig_bis: date | None = None
+    angebot_gueltig_bis: date | None = None
 
     auftragsnummer: str | None = None
+
     rechnungsnummer: str | None = None
     rechnungsdatum: date | None = None
     faellig_am: date | None = None
+    kunde: KundeBase
+
+
+class DokumentCreate(DokumentBase):
+    firmen_name: str
+
+
+class DokumentResponse(DokumentBase):
+    id: int
+    kunde_id: int
+    kunde: KundeResponse
+    eintragsdatum: date
 
     positionen: list[DokumentPositionsBase] = Field(default_factory=list)
 
+    model_config = ConfigDict(from_attributes=True)

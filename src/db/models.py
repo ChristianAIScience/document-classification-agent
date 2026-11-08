@@ -37,17 +37,22 @@ class KundenDokument(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     kunde_id: Mapped[int] = mapped_column(ForeignKey("kunden.id"), index=True, nullable=False)
-    dokumententyp: Mapped[str] = mapped_column(String(20), nullable=False)
+    dokumententyp: Mapped[str] = mapped_column(String(20),nullable=False)
     angebotsnummer: Mapped[str | None] = mapped_column(String(50), index=True, default=None)
+    angebotsdatum: Mapped[date | None] = mapped_column(Date, default=None)
+    angebot_gueltig_bis: Mapped[date | None] = mapped_column(Date, default=None)
     auftragsnummer: Mapped[str | None] = mapped_column(String(50), index=True, default=None)
     rechnungsnummer: Mapped[str | None] = mapped_column(String(50), unique=True, default=None)
-    eintragsdatum: Mapped[date] = mapped_column(Date, default=date.today)
+    rechnungsdatum: Mapped[date | None] = mapped_column(Date, default=None)
+    faellig_am: Mapped[date | None] = mapped_column(Date, default=None)
+    eintragsdatum: Mapped[date] = mapped_column(Date, default=date.today, nullable=False)
 
-    # Jedes Dokument gehört einem Kunden
+    # Beziehungen Jedes Dokument gehört einem Kunden
     kunde: Mapped["Kunde"] = relationship(back_populates="dokumente")
 
-    # Ein Dokument -> mehrere Positionen
-    positionen: Mapped[list["KundenDokumentPosition"]] = relationship(back_populates="dokument",
+    # Ein Dokument kann mehrere Positionen haben
+    positionen: Mapped[list["KundenDokumentPosition"]] = relationship(
+        back_populates="dokument",
         order_by="KundenDokumentPosition.position"
     )
 

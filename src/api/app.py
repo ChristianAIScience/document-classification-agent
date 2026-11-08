@@ -18,7 +18,8 @@ from db.database import Base, engine, get_db
 
 from api.schemas import (KundeCreate,
                          KundeResponse,
-                         Dokument
+                         DokumentCreate,
+                         DokumentResponse
                          )
 
 Base.metadata.create_all(bind=engine)
@@ -196,6 +197,59 @@ def get_kunde_by_email(
         )
 
     return kunde
+
+
+@app.post(
+    "/api/dokumente",
+    response_model=DokumentResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_dokument(
+    dokument: DokumentCreate,
+    db: Annotated[Session, Depends(get_db)],
+):
+
+    # 1. Kunden anhand des Firmennamens suchen
+    kunde = db.scalar(
+        select(models.Kunde).where(
+            models.Kunde.firmen_name == dokument.firmen_name
+        )
+    )
+
+    # 2. Prüfen, ob der Kunde existiert
+    if kunde is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Kunde '{dokument.firmen_name}' wurde nicht gefunden.",
+        )
+
+    # 3. Dokument erstellen
+    # firmen_name wird nicht direkt gespeichert,
+    # sondern die zugehörige kunde_id
+    dokument_daten = dokument.model_dump(
+        exclude={"firmen_name"}
+    )
+
+    new_dokument = models.KundenDokument(
+        **dokument_daten,
+        kunde_id=kunde.id
+    )
+
+    # 4. Dokument speichern
+    try:
+        db.add(new_dokument)
+        db.commit()
+
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Dokument konnte wegen eines Datenbankkonflikts nicht erstellt werden.",
+        )
+
+    db.refresh(new_dokument)
+
+    return new_dokument
 
 
 
