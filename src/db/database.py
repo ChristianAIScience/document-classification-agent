@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
-from db.postgresql_db import create_postgresql_db
 from core.config import settings
 
 # SQLALCHEMY_DATABASE_URL = "sqlite:///./testing.db"
@@ -9,8 +8,6 @@ from core.config import settings
 #     SQLALCHEMY_DATABASE_URL,
 #     connect_args={"check_same_thread": False},
 # )
-
-create_postgresql_db()  # Ensure the PostgreSQL database is created before proceeding
 
 DATABASE_URL = (
     f"postgresql+psycopg://{settings.DB_USER}:{settings.DB_PASSWORD}"

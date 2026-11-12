@@ -1,8 +1,6 @@
 from fastapi import FastAPI
 from multi_agent_system.api.routes.documents import router as documents_router
 
-# test
-
 
 app = FastAPI(
     title="Multi Agent System API",

@@ -14,15 +14,13 @@ from sqlalchemy.orm import Session
 
 import db.models as models
 
-from db.database import Base, engine, get_db
+from db.database import get_db
 
 from api.schemas import (KundeCreate,
                          KundeResponse,
                          DokumentCreate,
                          DokumentResponse
                          )
-
-Base.metadata.create_all(bind=engine)
 
 # uv run uvicorn src.api.app:app --reload
 
@@ -212,30 +210,30 @@ def create_dokument(
     # 1. Kunden anhand des Firmennamens suchen
     kunde = db.scalar(
         select(models.Kunde).where(
-            models.Kunde.firmen_name == dokument.firmen_name
+            models.Kunde.firmen_name == dokument.kunde.firmen_name
         )
     )
 
-    # 2. Prüfen, ob der Kunde existiert
+    # 2. Fehlenden Kunden anlegen; bestehende Kundendaten beibehalten.
     if kunde is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Kunde '{dokument.firmen_name}' wurde nicht gefunden.",
-        )
+        kunde = models.Kunde(**dokument.kunde.model_dump())
 
     # 3. Dokument erstellen
-    # firmen_name wird nicht direkt gespeichert,
-    # sondern die zugehörige kunde_id
+    # Beziehungen werden als ORM-Objekte statt verschachtelter Dictionaries gesetzt.
     dokument_daten = dokument.model_dump(
-        exclude={"firmen_name"}
+        exclude={"kunde", "positionen"}
     )
 
     new_dokument = models.KundenDokument(
         **dokument_daten,
-        kunde_id=kunde.id
+        kunde=kunde,
+        positionen=[
+            models.KundenDokumentPosition(**position.model_dump())
+            for position in dokument.positionen
+        ],
     )
 
-    # 4. Dokument speichern
+    # 4. Kunde, Dokument und Positionen gemeinsam speichern.
     try:
         db.add(new_dokument)
         db.commit()
