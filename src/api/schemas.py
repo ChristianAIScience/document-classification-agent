@@ -1,26 +1,17 @@
 from datetime import date
 from decimal import Decimal
-from enum import Enum
 from typing import Literal
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 
-class Einheit(str, Enum):
-    STUECK = "Stück"
-    METER = "m"
-    QUADRATMETER = "m²"
-    STUNDE = "Stunde"
-    KILOGRAMM = "kg"
-
-
 class KundeBase(BaseModel):
     firmen_name: str = Field(min_length=1, max_length=100)
-    kundennummer: str | None = None
-    strasse: str | None = None
-    postleitzahl: int | None = None
-    stadt: str | None = None
-    telefon: str | None = None
-    email: EmailStr | None = Field(max_length=120)
+    kundennummer: str | None = Field(default=None, max_length=50)
+    strasse: str | None = Field(default=None, max_length=60)
+    postleitzahl: str | None = Field(default=None, max_length=15)
+    stadt: str | None = Field(default=None, max_length=100)
+    telefon: str | None = Field(default=None, max_length=50)
+    email: EmailStr | None = Field(default=None, max_length=120)
 
 
 class KundeCreate(KundeBase):
@@ -36,14 +27,24 @@ class KundeResponse(KundeCreate):
 class DokumentPositionsBase(BaseModel):
     position: int | None = None
     beschreibung: str | None = None
-    menge: Decimal | None = Field(gt=0, description="Menge als Dezimalzahl, z. B. 2.5")
-    einheit: str | None = None
-    einzelpreis: Decimal | None = Field(ge=0, description="Preis pro Einheit")
-    gesamtpreis: Decimal | None = Field(ge=0, description="Gesamtbetrag der Position")
+    menge: Decimal | None = Field(
+        default=None, gt=0, max_digits=12, decimal_places=3,
+        description="Menge als Dezimalzahl, z. B. 2.5",
+    )
+    einheit: str | None = Field(default=None, max_length=50)
+    einzelpreis: Decimal | None = Field(
+        default=None, ge=0, max_digits=12, decimal_places=2,
+        description="Preis pro Einheit",
+    )
+    gesamtpreis: Decimal | None = Field(
+        default=None, ge=0, max_digits=12, decimal_places=2,
+        description="Gesamtbetrag der Position",
+    )
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CreateDokumentPositions(DokumentPositionsBase):
-    #kunden_id: int | None = None
     pass
 
 
@@ -52,22 +53,31 @@ class DokumentPositionsResponse(DokumentPositionsBase):
 
 
 class DokumentBase(BaseModel):
+    """Shared content; missing numbers and dates remain None for either type."""
+
     dokumententyp: Literal["angebot", "rechnung"]
 
-    angebotsnummer: str | None = None
+    angebotsnummer: str | None = Field(default=None, max_length=50)
     angebotsdatum: date | None = None
     angebot_gueltig_bis: date | None = None
 
-    auftragsnummer: str | None = None
+    auftragsnummer: str | None = Field(default=None, max_length=50)
 
-    rechnungsnummer: str | None = None
+    rechnungsnummer: str | None = Field(default=None, max_length=50)
     rechnungsdatum: date | None = None
     faellig_am: date | None = None
     kunde: KundeBase
+    positionen: list[DokumentPositionsBase] = Field(default_factory=list)
+
+
+class ExtractedDokument(DokumentBase):
+    """Validated extraction content without database IDs or an entry date."""
+
+    pass
 
 
 class DokumentCreate(DokumentBase):
-    firmen_name: str
+    pass
 
 
 class DokumentResponse(DokumentBase):
@@ -76,6 +86,6 @@ class DokumentResponse(DokumentBase):
     kunde: KundeResponse
     eintragsdatum: date
 
-    positionen: list[DokumentPositionsBase] = Field(default_factory=list)
+    positionen: list[DokumentPositionsResponse] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
