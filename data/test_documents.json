@@ -1,0 +1,31 @@
+[
+  {
+    "dokumententyp": "angebot",
+    "angebotsnummer": "6484501",
+    "kunde": {
+      "firmen_name": "Test Franken GmbH",
+      "kundennummer": "12345",
+      "strasse": "Hafenstraße 18",
+      "postleitzahl": "96052",
+      "stadt": "Bamberg",
+      "telefon": "+49 951 76532",
+      "email": "rechnung@test-franken.de"
+    },
+    "positionen": [
+      {
+        "position": 1,
+        "beschreibung": "Montage und Inbetriebnahme vor Ort",
+        "menge": 5,
+        "einheit": "Stück",
+        "gesamtpreis": 898.00
+      },
+      {
+        "position": 2,
+        "beschreibung": "Anfahrt und Einrichtung der Baustelle",
+        "menge": 1,
+        "einheit": "Pauschal",
+        "gesamtpreis": 250.00
+      }
+    ]
+  }
+]

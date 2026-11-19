@@ -49,6 +49,7 @@ class KundenDokument(Base):
     # Ein Dokument kann mehrere Positionen haben
     positionen: Mapped[list["KundenDokumentPosition"]] = relationship(
         back_populates="dokument",
+        cascade="all, delete-orphan",
         order_by="KundenDokumentPosition.position"
     )
 

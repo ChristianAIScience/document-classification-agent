@@ -16,6 +16,12 @@ dependencies = [
     "uvicorn[standard]>=0.54.0",
 ]
 
+[project.optional-dependencies]
+rag = [
+    "langchain-postgres>=0.0.19,<0.1",
+    "langchain-text-splitters>=1,<2",
+]
+
 [dependency-groups]
 dev = [
     "ipykernel>=7.4.0",
